@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stappenplan AI Prompting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header {
+            background-color: #003366; /* Donkerblauw */
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .step {
+            margin-bottom: 20px;
+        }
+        .step h2 {
+            color: #0056b3;
+        }
+        .step input, .step textarea, .step select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .output {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background-color: #f4f4f9;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Stappenplan AI prompt</h1>
+    </header>
+    <main>
+        <div class="step">
+            <h2>Stap 1: Definieer de rol van de AI</h2>
+            <textarea id="role" placeholder="Bijv. Jij bent een ervaren onderwijscoach gespecialiseerd in differentiatie..."></textarea>
+        </div>
+
+        <div class="step">
+            <h2>Stap 2: Geef de context</h2>
+            <textarea id="context" placeholder="Bijv. Ik geef geschiedenis aan HAVO-leerlingen van 16-17 jaar oud..."></textarea>
+        </div>
+
+        <div class="step">
+            <h2>Stap 3: Stel duidelijke instructies op</h2>
+            <textarea id="instructions" placeholder="Bijv. Ontwerp drie multiple choice vragen over de rol van filosofen tijdens de verlichting..."></textarea>
+        </div>
+
+        <div class="step">
+            <h2>Stap 4: Welke output moet de opdracht opleveren?</h2>
+            <textarea id="outputType" placeholder="Bijv. tabel, tekst, quiz, etc."></textarea>
+        </div>
+
+        <div class="step">
+            <h2>Stap 5: Hoe kan AI meedenken in het proces?</h2>
+            <textarea id="aiHelp" placeholder="Bijv. Laat AI meedenken over hoe RTTI verwerkt kan worden in quizvragen..."></textarea>
+        </div>
+
+        <div>
+            <button onclick="generatePrompt()">Genereer Prompt</button>
+            <button onclick="copyToClipboard()">Kopieer naar klembord</button>
+        </div>
+
+        <div class="output" id="output">
+            <h2>Gegenereerde Prompt</h2>
+            <p>Je gegenereerde prompt verschijnt hier.</p>
+        </div>
+    </main>
+    <script>
+        function generatePrompt() {
+            const role = document.getElementById('role').value.trim();
+            const context = document.getElementById('context').value.trim();
+            const instructions = document.getElementById('instructions').value.trim();
+            const outputType = document.getElementById('outputType').value.trim();
+            const aiHelp = document.getElementById('aiHelp').value.trim();
+
+            if (!role || !context || !instructions || !outputType) {
+                document.getElementById('output').innerHTML = `
+                    <h2>Gegenereerde Prompt</h2>
+                    <p style="color: red;">Vul alle verplichte velden in om de prompt te genereren.</p>
+                `;
+                return;
+            }
+
+            const prompt = `
+                Jij bent ${role}. ${context}. 
+                Hier is de taak: ${instructions}.
+                De opdracht moet de volgende output opleveren: ${outputType}.
+                ${aiHelp ? `Daarnaast kan AI meedenken over het volgende: ${aiHelp}.` : ''}
+            `.replace(/\s+/g, ' ').trim();
+
+            document.getElementById('output').innerHTML = `
+                <h2>Gegenereerde Prompt</h2>
+                <p id="generatedPrompt">${prompt}</p>
+            `;
+        }
+
+        function copyToClipboard() {
+            const promptText = document.getElementById('generatedPrompt');
+            if (promptText) {
+                navigator.clipboard.writeText(promptText.innerText)
+                    .then(() => alert('Prompt gekopieerd naar klembord!'))
+                    .catch(err => alert('Fout bij kopiëren: ' + err));
+            } else {
+                alert('Geen prompt om te kopiëren!');
+            }
+        }
+    </script>
+</body>
+</html>
